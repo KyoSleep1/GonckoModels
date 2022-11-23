@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "gmodels",
+  "version": "${version}",
+
+  "name": "GonckoModels",
+  "description": "This is an example description!",
+  "authors": [
+    "KyoSleep"
+  ],
+  "contact": {
+    "geckolib discord": "https://discord.gg/uDnmREgexb",
+    "author discord": "KyoSleep#6920"
+  },
+
+  "license": "MIT",
+  "icon": "assets/gmodels/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.sleep.gmodels.Main"
+    ]
+  },
+  "mixins": [
+    "gmodels.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.10",
+    "fabric-api": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
