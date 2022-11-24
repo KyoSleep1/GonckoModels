@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "dev.sleep.gmodels.Main"
+    ],
+    "client": [
+      "dev.sleep.gmodels.client.MainClient"
     ]
   },
   "mixins": [
