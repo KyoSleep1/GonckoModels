@@ -6,16 +6,18 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
-import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static software.bernie.geckolib.constant.DefaultAnimations.IDLE;
+import static software.bernie.geckolib.constant.DefaultAnimations.WALK;
 
 public class GonckoPlayer extends LivingEntity implements GeoReplacedEntity {
 
@@ -27,24 +29,26 @@ public class GonckoPlayer extends LivingEntity implements GeoReplacedEntity {
 
     @Override
     public void registerControllers(AnimatableManager<?> animatableManager) {
-        animatableManager.addController(DefaultAnimations.genericIdleController(this))
-                .addController(new AnimationController<>(this, 5, this::poseBody));
+        animatableManager.addController(this.genericWalkIdleController(this));
+    }
+
+    public <T extends GeoAnimatable> AnimationController<T> genericWalkIdleController(T animatable) {
+        return new AnimationController<>(animatable, "Walk/Idle", 0, event -> {
+            if(!event.isMoving()){
+                event.getController().setAnimation(IDLE);
+                event.getController().setAnimationSpeed(1);
+                return PlayState.CONTINUE;
+            }
+
+            event.getController().setAnimationSpeed(2);
+            event.getController().setAnimation(WALK);
+            return PlayState.CONTINUE;
+        });
     }
 
     @Override
     public AnimationFactory getFactory() {
         return factory;
-    }
-
-    // Create the animation handler for the body segment
-    protected PlayState poseBody(AnimationEvent<GonckoPlayer> event) {
-        if (event.isMoving()) {
-            //Yeah i know
-            event.getController().setAnimation(DefaultAnimations.SNEAK);
-            return PlayState.CONTINUE;
-        }
-
-        return PlayState.STOP;
     }
 
     @Override

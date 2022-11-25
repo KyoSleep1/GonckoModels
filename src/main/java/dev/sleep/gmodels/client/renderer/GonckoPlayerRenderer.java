@@ -43,10 +43,10 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
 
     private Player cachedPlayer;
 
-    public GonckoPlayerRenderer(EntityRendererProvider.Context renderManager){
+    public GonckoPlayerRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new GonckoPlayerModel(), new GonckoPlayer());
         // Add some armor rendering
-        addRenderLayer(new ItemArmorGeoLayer<>(this) {
+        this.addRenderLayer(new ItemArmorGeoLayer<>(this) {
 
             @Override
             public void preRender(PoseStack poseStack, GonckoPlayer animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
@@ -101,7 +101,7 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
         });
 
         // Add some held item rendering
-        addRenderLayer(new BlockAndItemGeoLayer<>(this) {
+        this.addRenderLayer(new BlockAndItemGeoLayer<>(this) {
             @Nullable
             @Override
             protected ItemStack getStackForBone(GeoBone bone, GonckoPlayer animatable) {
@@ -129,8 +129,7 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
 
                     if (stack.getItem() instanceof ShieldItem)
                         poseStack.translate(0, 0.125, -0.25);
-                }
-                else if (stack == cachedPlayer.getOffhandItem()) {
+                } else if (stack == cachedPlayer.getOffhandItem()) {
                     poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 
                     if (stack.getItem() instanceof ShieldItem) {
