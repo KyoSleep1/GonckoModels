@@ -7,9 +7,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -21,7 +21,7 @@ import static software.bernie.geckolib.constant.DefaultAnimations.WALK;
 
 public class GonckoPlayer extends LivingEntity implements GeoReplacedEntity {
 
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache instanceCache = GeckoLibUtil.createInstanceCache(this);
 
     public GonckoPlayer() {
         super(EntityType.PLAYER, null);
@@ -30,6 +30,11 @@ public class GonckoPlayer extends LivingEntity implements GeoReplacedEntity {
     @Override
     public void registerControllers(AnimatableManager<?> animatableManager) {
         animatableManager.addController(this.genericWalkIdleController(this));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return instanceCache;
     }
 
     public <T extends GeoAnimatable> AnimationController<T> genericWalkIdleController(T animatable) {
@@ -44,11 +49,6 @@ public class GonckoPlayer extends LivingEntity implements GeoReplacedEntity {
             event.getController().setAnimation(WALK);
             return PlayState.CONTINUE;
         });
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
     }
 
     @Override

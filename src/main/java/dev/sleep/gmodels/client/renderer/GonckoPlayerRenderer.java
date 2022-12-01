@@ -41,8 +41,6 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
     private static final String LEFT_SLEEVE = "armorBipedLeftArm";
     private static final String HELMET = "armorBipedHead";
 
-    private Player cachedPlayer;
-
     public GonckoPlayerRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new GonckoPlayerModel(), new GonckoPlayer());
         // Add some armor rendering
@@ -50,12 +48,13 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
 
             @Override
             public void preRender(PoseStack poseStack, GonckoPlayer animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-                this.mainHandStack = cachedPlayer.getItemBySlot(EquipmentSlot.MAINHAND);
-                this.offhandStack = cachedPlayer.getItemBySlot(EquipmentSlot.OFFHAND);
-                this.helmetStack = cachedPlayer.getItemBySlot(EquipmentSlot.HEAD);
-                this.chestplateStack = cachedPlayer.getItemBySlot(EquipmentSlot.CHEST);
-                this.leggingsStack = cachedPlayer.getItemBySlot(EquipmentSlot.LEGS);
-                this.bootsStack = cachedPlayer.getItemBySlot(EquipmentSlot.FEET);
+                Player player = GonckoPlayerRenderer.this.getCurrentEntity();
+                this.mainHandStack = player.getItemBySlot(EquipmentSlot.MAINHAND);
+                this.offhandStack = player.getItemBySlot(EquipmentSlot.OFFHAND);
+                this.helmetStack = player.getItemBySlot(EquipmentSlot.HEAD);
+                this.chestplateStack = player.getItemBySlot(EquipmentSlot.CHEST);
+                this.leggingsStack = player.getItemBySlot(EquipmentSlot.LEGS);
+                this.bootsStack = player.getItemBySlot(EquipmentSlot.FEET);
             }
 
             @Nullable
@@ -106,9 +105,10 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
             @Override
             protected ItemStack getStackForBone(GeoBone bone, GonckoPlayer animatable) {
                 // Retrieve the items in the entity's hands for the relevant bone
+                Player player = GonckoPlayerRenderer.this.getCurrentEntity();
                 return switch (bone.getName()) {
-                    case LEFT_HAND -> cachedPlayer.getOffhandItem();
-                    case RIGHT_HAND -> cachedPlayer.getMainHandItem();
+                    case LEFT_HAND -> player.getOffhandItem();
+                    case RIGHT_HAND -> player.getMainHandItem();
                     default -> null;
                 };
             }
@@ -124,12 +124,13 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
 
             @Override
             protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, GonckoPlayer animatable, MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
-                if (stack == cachedPlayer.getMainHandItem()) {
+                Player player = GonckoPlayerRenderer.this.getCurrentEntity();
+                if (stack == player.getMainHandItem()) {
                     poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 
                     if (stack.getItem() instanceof ShieldItem)
                         poseStack.translate(0, 0.125, -0.25);
-                } else if (stack == cachedPlayer.getOffhandItem()) {
+                } else if (stack == player.getOffhandItem()) {
                     poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 
                     if (stack.getItem() instanceof ShieldItem) {
@@ -141,11 +142,5 @@ public class GonckoPlayerRenderer extends GeoReplacedEntityRenderer<Player, Gonc
                 super.renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
             }
         });
-    }
-
-    @Override
-    public void render(@NotNull Player player, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        cachedPlayer = player;
-        super.render(player, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }
